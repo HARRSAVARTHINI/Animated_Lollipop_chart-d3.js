@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<body>
+<p><Center><strong>Data Visualization for Analytics </strong></center> </p>
+<p><Center><strong>Guided By: DR.R RAJA SUBRAMANIAN</strong></center> </p>
+<p><Center>Name:HARRSAVARTHINI K</center> </p>
+<p><Center>Register Number: 9920004049</center> </p>
+<p><Center>Class/Sec: 3rd/B(CSE)</center> </p>
+<p><Center>Course Code: CSE18R381</center> </p>
+<p><Center><strong>SIMPLE ANIMATION WITH LOLLIPOP CHART</strong></center> </p>
+<p><Center><strong>using d3.js</strong></center> </p>
+<p><Center>In this chart x-axis is a Average of Annual Consumption of fermented food per person and y-axis is a fermented food(type) according to the Country</center> </p>
+
+</body>
+
+<!-- Load d3.js -->
+<script src="https://d3js.org/d3.v4.js"></script>
+
+<!-- Create a div where the graph will take place -->
+<div id="my_dataviz"></div>
+
+<script>
+
+// set the dimensions and margins of the graph
+var margin = {top: 20, right: 30, bottom: 40, left: 200},
+    width = 460 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+// append the svg object to the body of the page
+var svg = d3.select("#my_dataviz")
+  .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+// Parse the Data
+d3.csv("C:/Users/gowsh/Documents/DataVisualization/d3/lollipop/Fermented_Food.csv", function(data) {
+
+
+// sort data
+data.sort(function(b, a) {
+  return a.Annual_Consumption - b.Annual_Consumption;
+});
+
+svg.append("text")
+       .attr("transform", "translate(100,0)")
+       .attr("x", 20)
+       .attr("y", 20)
+       .attr("font-size", "20px")
+       .text("Fermented Food")
+
+
+
+
+// Add X axis
+var x = d3.scaleLinear()
+  .domain([0, 130])
+  .range([ 0, width]);
+svg.append("g")
+  .attr("transform", "translate(0," + height + ")")
+  .call(d3.axisBottom(x))
+  .selectAll("text")
+    .attr("transform", "translate(-10,0)rotate(-45)")
+    .style("text-anchor", "end");
+
+         
+
+// Y axis
+var y = d3.scaleBand()
+  .range([ 0, height ])
+  .domain(data.map(function(d) { return d.Food; }))
+  .padding(1);
+svg.append("g")
+  .call(d3.axisLeft(y))
+
+
+ 
+
+
+
+// Lines
+svg.selectAll("myline")
+  .data(data)
+  .enter()
+  .append("line")
+    .attr("x1", x(0))
+    .attr("x2", x(0))
+    .attr("y1", function(d) { return y(d.Food); })
+    .attr("y2", function(d) { return y(d.Food); })
+    .attr("stroke", "grey")
+
+// Circles -> start at X=0
+svg.selectAll("mycircle")
+  .data(data)
+  .enter()
+  .append("circle")
+    .attr("cx", x(0) )
+    .attr("cy", function(d) { return y(d.Food); })
+    .attr("r", "7")
+    .style("fill", "#69b3a2")
+    .attr("stroke", "black")
+
+
+// Change the X coordinates of line and circle
+svg.selectAll("circle")
+  .transition()
+  .duration(2000)
+  .attr("cx", function(d) { return x(d.Annual_Consumption); })
+
+svg.selectAll("line")
+  .transition()
+  .duration(2000)
+  .attr("x1", function(d) { return x(d.Annual_Consumption); })
+
+
+})
+
+
+
+</script>
